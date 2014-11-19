@@ -83,6 +83,32 @@ func CreateVEBTree(u int) *VEB {
 	return V
 }
 
+func (V VEB) Successor(x int) int {
+	if V.u == 2 {
+		if x == 0 && V.max == 1 {
+			return 1
+		} else {
+			return -1
+		}
+	} else if V.min != -1 && x < V.min {
+		return V.min
+	} else {
+		maxLow := V.cluster[V.High(x)].Max() // max-low = vEB-TREE-MAXIMUM (V.cluster[high(x)])
+		if maxLow != -1 && V.Low(x) < maxLow {
+			offset := V.cluster[V.High(x)].Successor(V.Low(x)) //  vEB-TREE-SUCCESSOR(V.cluster[high(x)], low(x))
+			return V.Index(V.High(x), offset)
+		} else {
+			succCluster := V.summary.Successor(V.High(x)) //vEB-TREE-SUCCESSOR(V.summary, high(x))	
+			if succCluster == -1 {
+				return -1
+			} else {
+				offset := V.cluster[succCluster].Min()
+				return V.Index(succCluster, offset)
+			}		
+		}
+	}
+}
+
 
 // Calculate lower square root (helper function)
 func LowerSqrt(u int) int {

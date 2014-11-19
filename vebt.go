@@ -109,6 +109,36 @@ func (V VEB) Successor(x int) int {
 	}
 }
 
+func (V VEB) Predecessor(x int) int {
+	if V.u == 2 {
+		if x == 1 && V.min == 0 {
+			return 0
+		} else {
+			return -1
+		}
+	} else if V.max != -1 && x > V.max {
+		return V.max
+	} else {
+		minLow := V.cluster[V.High(x)].Min() //vEB-TREE-MINIMUM(V.cluster[high(x)])
+		if minLow != -1 && V.Low(x) > minLow {
+			offset := V.cluster[V.High(x)].Predecessor(V.Low(x))
+			return V.Index(V.High(x), offset)
+		} else {
+			predCluster := V.summary.Predecessor(V.High(x))
+			if predCluster == -1 {
+				if V.min != -1 && x > V.min {
+					return V.min
+				} else  {
+					return -1
+				}
+			} else {
+				offset := V.cluster[predCluster].Max()
+				return V.Index(predCluster, offset)
+			}
+		}
+	}
+}
+
 
 // Calculate lower square root (helper function)
 func LowerSqrt(u int) int {

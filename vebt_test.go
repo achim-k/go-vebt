@@ -38,7 +38,7 @@ func TestRun(t *testing.T) {
 
 	for i := 0; i < runs; i++ {
 		fmt.Printf("#%v...\t", i+1)
-		u := 128
+		u := 16
 		rd := rand.New(rand.NewSource(int64(time.Now().Nanosecond())*2))
 		keys := []int{}
 		keyNo := rd.Intn(u)
@@ -56,6 +56,7 @@ func TestRun(t *testing.T) {
 		if V != nil {
 			insertMembershipTest(t, V, keys)
 			successorTest(t, V, keys)
+			predecessorTest(t, V, keys)
 		} else {
 			t.Errorf("CreateVEBTree(%v) failure", u )
 		}
@@ -116,6 +117,33 @@ func successorTest(t *testing.T, V *VEB, keys []int) {
 			expect := nextBiggerKey
 			if foundSuccessor := V.Successor(i); foundSuccessor != expect {
 				t.Errorf("Successor(%v) = %v, want %v", i, foundSuccessor, expect)
+			}
+		}
+	}
+}
+
+func predecessorTest(t *testing.T, V *VEB, keys []int) {
+	for i := 0; i < V.u; i++ {
+		//find next smaller key
+		nextSmallerKey := -1
+		for k := len(keys)-1; k >= 0; k-- {
+			if keys[k] < i {
+				nextSmallerKey = keys[k]
+				break
+			}
+		}
+
+		if nextSmallerKey == -1 {
+			//No Predecessor should be there, hence we expect -1 as return
+			expect := -1
+			if foundPredecessor := V.Predecessor(i); foundPredecessor != expect {
+				t.Errorf("Predecessor(%v) = %v, want %v", i, foundPredecessor, expect)
+			}
+		} else {
+			//There is a key which is smaller then the current tested one, we expect the Predecessor to be that smaller key
+			expect := nextSmallerKey
+			if foundPredecessor := V.Predecessor(i); foundPredecessor != expect {
+				t.Errorf("Predecessor(%v) = %v, want %v", i, foundPredecessor, expect)
 			}
 		}
 	}

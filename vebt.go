@@ -1,7 +1,7 @@
 package vebt
 
 import (
-	//"fmt"
+	"fmt"
 	"math"
 )
 
@@ -54,8 +54,12 @@ func (V *VEB) Insert(x int) {
 	}
 }
 
-func CreateVEBTree(u int, testCounter *int) *VEB {
-	*testCounter++
+func CreateVEBTree(u int) *VEB {
+	pow := math.Log2(float64(u))
+	if math.Trunc(pow) != pow {
+		fmt.Println("Tree universe size u not power of 2 (u != 2^x)")
+		return nil
+	}
 
 	V := new(VEB)
 	V.min, V.max = -1, -1
@@ -69,12 +73,12 @@ func CreateVEBTree(u int, testCounter *int) *VEB {
 	clusterCount := HigherSqrt(u)
 	clusterUnivSize := LowerSqrt(u)
 	for i := 0; i < clusterCount; i++ {
-		V.cluster = append(V.cluster, CreateVEBTree(clusterUnivSize, testCounter))
+		V.cluster = append(V.cluster, CreateVEBTree(clusterUnivSize))
 	}
 
 	// create summary
 	summaryUnivSize := HigherSqrt(u)
-	V.summary = CreateVEBTree(summaryUnivSize, testCounter)
+	V.summary = CreateVEBTree(summaryUnivSize)
 	
 	return V
 }

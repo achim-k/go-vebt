@@ -21,12 +21,20 @@ func TestHigherSqrt(t *testing.T) {
 	}
 }
 
+func TestCreateVEBTree(t *testing.T) {
+	counter := 0
+	const in, out = 16, 21
+	if CreateVEBTree(in, &counter); counter != out {
+		t.Errorf("CreateVEBTree(%v) created %v VEB structures, want %v", in, counter, out)
+	}
+}
+
 func TestRun(t *testing.T) {
 	runs := 100
 
 	for i := 0; i < runs; i++ {
 
-		u := 16
+		u := 128
 		rd := rand.New(rand.NewSource(int64(time.Now().Nanosecond())*2))
 		keys := []int{}
 		keyNo := rd.Intn(u)
@@ -35,12 +43,15 @@ func TestRun(t *testing.T) {
 			keys = append(keys, rd.Intn(u - 1))
 		}
 
-		V := createTree(t)
-		insertMembershipTest(t, &V, keyNo, keys)
+		dummy := 0
+		V := CreateVEBTree(u, &dummy)
+		insertMembershipTest(t, V, keyNo, keys)
 	}
 }
 
 func createTree(t *testing.T) (VEB) {
+	//TODO: Would be nice to have u parameterized and tree created automatically
+
 	const u = 16
 
 	// VEB(2) objects (layer3)

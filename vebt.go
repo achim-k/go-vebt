@@ -54,6 +54,32 @@ func (V *VEB) Insert(x int) {
 	}
 }
 
+func CreateVEBTree(u int, testCounter *int) *VEB {
+	*testCounter++
+
+	V := new(VEB)
+	V.min, V.max = -1, -1
+	V.u = u
+
+	if u == 2 {
+		return V
+	}
+
+	// create clusters
+	clusterCount := HigherSqrt(u)
+	clusterUnivSize := LowerSqrt(u)
+	for i := 0; i < clusterCount; i++ {
+		V.cluster = append(V.cluster, CreateVEBTree(clusterUnivSize, testCounter))
+	}
+
+	// create summary
+	summaryUnivSize := HigherSqrt(u)
+	V.summary = CreateVEBTree(summaryUnivSize, testCounter)
+	
+	return V
+}
+
+
 // Calculate lower square root (helper function)
 func LowerSqrt(u int) int {
 	return int(math.Pow(2.0, math.Floor(math.Log2(float64(u)) / 2)))

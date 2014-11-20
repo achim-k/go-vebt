@@ -55,6 +55,11 @@ func (V *VEB) Insert(x int) {
 }
 
 func CreateVEBTree(u int) *VEB {
+	if(u < 2) {
+		fmt.Println("Tree universe size u needs to be bigger than 2")
+		return nil
+	}
+
 	pow := math.Log2(float64(u))
 	if math.Trunc(pow) != pow {
 		fmt.Println("Tree universe size u not power of 2 (u != 2^x)")
@@ -93,12 +98,12 @@ func (V VEB) Successor(x int) int {
 	} else if V.min != -1 && x < V.min {
 		return V.min
 	} else {
-		maxLow := V.cluster[V.High(x)].Max() // max-low = vEB-TREE-MAXIMUM (V.cluster[high(x)])
+		maxLow := V.cluster[V.High(x)].Max()
 		if maxLow != -1 && V.Low(x) < maxLow {
-			offset := V.cluster[V.High(x)].Successor(V.Low(x)) //  vEB-TREE-SUCCESSOR(V.cluster[high(x)], low(x))
+			offset := V.cluster[V.High(x)].Successor(V.Low(x))
 			return V.Index(V.High(x), offset)
 		} else {
-			succCluster := V.summary.Successor(V.High(x)) //vEB-TREE-SUCCESSOR(V.summary, high(x))	
+			succCluster := V.summary.Successor(V.High(x))
 			if succCluster == -1 {
 				return -1
 			} else {
@@ -119,7 +124,7 @@ func (V VEB) Predecessor(x int) int {
 	} else if V.max != -1 && x > V.max {
 		return V.max
 	} else {
-		minLow := V.cluster[V.High(x)].Min() //vEB-TREE-MINIMUM(V.cluster[high(x)])
+		minLow := V.cluster[V.High(x)].Min()
 		if minLow != -1 && V.Low(x) > minLow {
 			offset := V.cluster[V.High(x)].Predecessor(V.Low(x))
 			return V.Index(V.High(x), offset)
@@ -139,6 +144,36 @@ func (V VEB) Predecessor(x int) int {
 	}
 }
 
+func (V *VEB) Delete(x int) {
+	if V.min == V.max {
+		V.min, V.max = -1, -1
+	} else if V.u == 2 {
+		if x == 0 {
+			V.min = 1
+		} else {
+			V.min = 0
+		}
+		V.max = V.min
+	} else if x == V.min {
+		firstCluster := V.summary.Min()
+		x = V.Index(firstCluster, V.cluster[firstCluster].Min())
+		V.min = x
+		V.cluster[V.High(x)].Delete(V.Low(x))
+		if V.cluster[V.High(x)].Min() == -1 {
+			V.summary.Delete(V.High(x))
+			if x == V.max {
+				summaryMax := V.summary.Max()
+				if summaryMax == -1 {
+					V.max = V.min
+				} else {
+					V.max = V.Index(summaryMax, V.cluster[summaryMax].Max())
+				}
+			}
+		} else if x == V.max {
+			V.max = V.Index(V.High(x), V.cluster[V.High(x)].Max())
+		}
+	}
+}
 
 // Calculate lower square root (helper function)
 func LowerSqrt(u int) int {

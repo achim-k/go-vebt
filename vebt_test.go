@@ -2,7 +2,7 @@ package vebt
 
 import(
 	"testing"
-	"fmt"
+	"math"
 	"math/rand"
 	"time"
 	"sort"
@@ -23,127 +23,174 @@ func TestHigherSqrt(t *testing.T) {
 }
 
 func TestCreateVEBTree(t *testing.T) {
-	counter := 0
 	const in, out = 16, 21
 
 	// TODO: Count number of structs and compare
-	if CreateVEBTree(in); counter != out {
-		//t.Errorf("CreateVEBTree(%v) created %v VEB structures, want %v", in, counter, out)
+	if CreateVEBTree(in) == nil {
+		t.Errorf("CreateVEBTree(%v) created %v VEB structures, want", in, out)
 	}
 }
 
-func TestRun(t *testing.T) {
-	runs := 20
-	fmt.Printf("Performing %v tests...\n", runs)
-
-	for i := 0; i < runs; i++ {
-		fmt.Printf("#%v...\t", i+1)
-		u := 16
-		rd := rand.New(rand.NewSource(int64(time.Now().Nanosecond())*2))
-		keys := []int{}
-		keyNo := rd.Intn(u)
-		//create random keys
-		for i := 0; i < keyNo; i++ {
-			rndKey := rd.Intn(u - 1)
-			if arrayContains(keys, rndKey) == false {
-				keys = append(keys, rndKey)	
+func TestMax(t *testing.T) {
+	maxUpower := 10
+	// Create trees with different universe sizes
+	for i := 1; i < maxUpower; i++ {
+		u := int(math.Pow(2, float64(i)))
+		V := CreateVEBTree(u)
+		// Insert random, sorted keys and check if max corresponds to that key
+		keys := createRandomSortedKeys(u)
+		for j := 0; j < len(keys); j++ {
+			V.Insert(keys[j]) // Insert key into tree
+			if out := V.Max(); out != keys[j] {
+				t.Errorf("Max() = %v, want %v", out, keys[j])
+				break
 			}
 		}
-		//sort keys
-		sort.Ints(keys)
+	}
+}
 
+func TestMin(t *testing.T) {
+	maxUpower := 10
+	// Create trees with different universe sizes
+	for i := 1; i < maxUpower; i++ {
+		u := int(math.Pow(2, float64(i)))
 		V := CreateVEBTree(u)
-		if V != nil {
-			insertMembershipTest(t, V, keys)
-			successorTest(t, V, keys)
-			predecessorTest(t, V, keys)
-		} else {
-			t.Errorf("CreateVEBTree(%v) failure", u )
-		}
-		fmt.Printf("done\n")
-		
-	}
-}
-
-func insertMembershipTest(t *testing.T, V *VEB, keys []int) {
-	//we expect an empty tree, test each key for emptiness first
-	for i := 0; i < V.u; i++ {
-		if V.IsMember(i) == true {
-			t.Errorf("IsMember(%v) = %v, want %v", i, true, false)
-		}
-	}
-
-	//fmt.Printf("Random keys (%v): %v\n", len(keys), keys)
-
-	// Insert keys
-	for i := 0; i < len(keys); i++ {
-		V.Insert(keys[i])
-	}
-
-	// Member Check
-	for i := 0; i < V.u; i++ {
-		// Check existing keys
-		if arrayContains(keys, i) {
-			if V.IsMember(i) == false {
-				t.Errorf("IsMember(%v) = %v, want %v", i, false, true)
-			}	
-		} else { // CHeck nonexisting keys
-			if V.IsMember(i) == true {
-				t.Errorf("IsMember(%v) = %v, want %v", i, true, false)
-			}	
+		// Insert random, sorted keys and check if min corresponds to that key
+		keys := createRandomSortedKeys(u)
+		for j := len(keys) - 1; j >= 0; j-- {
+			V.Insert(keys[j]) // Insert key into tree
+			if out := V.Min(); out != keys[j] {
+				t.Errorf("Min() = %v, want %v", out, keys[j])
+				break
+			}
 		}
 	}
 }
 
-func successorTest(t *testing.T, V *VEB, keys []int) {
-	for i := 0; i < V.u; i++ {
-		//find next bigger key
-		nextBiggerKey := -1
-		for k := 0; k < len(keys); k++ {
-			if keys[k] > i {
-				nextBiggerKey = keys[k]
+// Tests insert, membership + delete
+func TestIsMember(t *testing.T) {
+	 maxUpower := 10
+	// Create trees with different universe sizes
+	for i := 1; i < maxUpower; i++ {
+		u := int(math.Pow(2, float64(i)))
+		V := CreateVEBTree(u)
+		// check empty tree for membership first
+		for j := 0; j < u; j++ {
+			if out := V.IsMember(j); out != false {
+				t.Errorf("IsMember(%v) = %v, want %v", j, out, false)
 				break
 			}
 		}
 
-		if nextBiggerKey == -1 {
-			//No Successor should be there, hence we expect -1 as return
-			expect := -1
-			if foundSuccessor := V.Successor(i); foundSuccessor != expect {
-				t.Errorf("Successor(%v) = %v, want %v", i, foundSuccessor, expect)
+		// insert random keys
+		keys := createRandomSortedKeys(u)
+		for j := 0; j < len(keys); j++ {
+			V.Insert(keys[j]) // Insert key into tree
+		}
+
+		// check membership again
+		for j := 0; j < u; j++ {
+			expect := false
+			if arrayContains(keys, j) {
+				expect = true // key was inserted, so expect IsMember to return true
 			}
-		} else {
-			//There is a key which is higher then the current tested one, we expect the successor to be that higher key
+
+			if out := V.IsMember(j); out != expect {
+				t.Errorf("IsMember(%v) = %v, want %v", j, out, expect)
+				break
+			}
+		}
+
+		// delete inserted keys again
+		for j := 0; j < len(keys); j++ {
+			V.Delete(keys[j]) // Insert key into tree
+		}
+
+		// check membership again
+		for j := 0; j < u; j++ {
+			expect := false
+			if out := V.IsMember(j); out != expect {
+				t.Errorf("IsMember(%v) = %v, want %v", j, out, expect)
+				break
+			}
+		}
+	}
+}
+
+func TestSuccessor(t *testing.T) {
+	maxUpower := 10
+	// Create trees with different universe sizes
+	for i := 1; i < maxUpower; i++ {
+		u := int(math.Pow(2, float64(i)))
+		V := CreateVEBTree(u)
+		
+		// check emptry tree for successors
+		for j := 0; j < u; j++ {
+			if out := V.Successor(j); out != -1 {
+				t.Errorf("Successor(%v) = %v, want %v", j, out, -1)
+				break
+			}
+		}
+
+		// insert random keys 
+		keys := createRandomSortedKeys(u)
+		for j := 0; j < len(keys); j++ {
+			V.Insert(keys[j]) // Insert key into tree
+		}
+
+		for j := 0; j < u; j++ {
+			// check if successor matches next bigger inserted key
+			nextBiggerKey := -1
+			//find next bigger key
+			for k := 0; k < len(keys); k++ {
+				if keys[k] > i {
+					nextBiggerKey = keys[k]
+					break
+				}
+			}
 			expect := nextBiggerKey
 			if foundSuccessor := V.Successor(i); foundSuccessor != expect {
 				t.Errorf("Successor(%v) = %v, want %v", i, foundSuccessor, expect)
+				break
 			}
 		}
 	}
 }
 
-func predecessorTest(t *testing.T, V *VEB, keys []int) {
-	for i := 0; i < V.u; i++ {
-		//find next smaller key
-		nextSmallerKey := -1
-		for k := len(keys)-1; k >= 0; k-- {
-			if keys[k] < i {
-				nextSmallerKey = keys[k]
+func TestPredecessor(t *testing.T) {
+	maxUpower := 10
+	// Create trees with different universe sizes
+	for i := 1; i < maxUpower; i++ {
+		u := int(math.Pow(2, float64(i)))
+		V := CreateVEBTree(u)
+		
+		// check emptry tree for predecessors
+		for j := 0; j < u; j++ {
+			if out := V.Predecessor(j); out != -1 {
+				t.Errorf("Predecessor(%v) = %v, want %v", j, out, -1)
 				break
 			}
 		}
 
-		if nextSmallerKey == -1 {
-			//No Predecessor should be there, hence we expect -1 as return
-			expect := -1
-			if foundPredecessor := V.Predecessor(i); foundPredecessor != expect {
-				t.Errorf("Predecessor(%v) = %v, want %v", i, foundPredecessor, expect)
+		// insert random keys 
+		keys := createRandomSortedKeys(u)
+		for j := 0; j < len(keys); j++ {
+			V.Insert(keys[j]) // Insert key into tree
+		}
+
+		for j := 0; j < u; j++ {
+			//find next smaller key
+			nextSmallerKey := -1
+			for k := len(keys)-1; k >= 0; k-- {
+				if keys[k] < i {
+					nextSmallerKey = keys[k]
+					break
+				}
 			}
-		} else {
-			//There is a key which is smaller then the current tested one, we expect the Predecessor to be that smaller key
 			expect := nextSmallerKey
-			if foundPredecessor := V.Predecessor(i); foundPredecessor != expect {
-				t.Errorf("Predecessor(%v) = %v, want %v", i, foundPredecessor, expect)
+			if foundPred := V.Predecessor(i); foundPred != expect {
+				t.Errorf("Predecessor(%v) = %v, want %v", i, foundPred, expect)
+				break
 			}
 		}
 	}
@@ -156,4 +203,20 @@ func arrayContains(ar []int, value int) bool {
 		}
 	}
 	return false
+}
+
+func createRandomSortedKeys(max int) []int {
+	rnd := rand.New(rand.NewSource(int64(time.Now().Nanosecond())*1))
+	keys := []int{}
+	keyNo := rnd.Intn(max)
+	//create random keys
+	for i := 0; i < keyNo; i++ {
+		rndKey := rnd.Intn(max - 1)
+		if arrayContains(keys, rndKey) == false {
+			keys = append(keys, rndKey)	
+		}
+	}
+	sort.Ints(keys)
+
+	return keys
 }

@@ -22,12 +22,23 @@ func TestHigherSqrt(t *testing.T) {
 	}
 }
 
-func TestCreateVEBTree(t *testing.T) {
-	const in, out = 16, 21
+func TestCreateTree(t *testing.T) {
+	maxUpower := 16
+	// Create trees with different universe sizes
+	for i := 1; i < maxUpower; i++ {
+		u := int(math.Pow(2, float64(i)))
+		V := CreateTree(u)
 
-	// TODO: Count number of structs and compare
-	if CreateVEBTree(in) == nil {
-		t.Errorf("CreateVEBTree(%v) created %v VEB structures, want", in, out)
+		if V == nil {
+			t.Errorf("CreateTree(%v) returned %v", u, nil)
+		}
+
+		// TODO: compare count with calculated number
+		/*
+		if count := V.Count(); count != 1 {
+			t.Errorf("CreateTree(%v) created %v VEB structures, want %v", u, count, count)
+		}
+		*/
 	}
 }
 
@@ -36,7 +47,7 @@ func TestMax(t *testing.T) {
 	// Create trees with different universe sizes
 	for i := 1; i < maxUpower; i++ {
 		u := int(math.Pow(2, float64(i)))
-		V := CreateVEBTree(u)
+		V := CreateTree(u)
 		// Insert random, sorted keys and check if max corresponds to that key
 		keys := createRandomSortedKeys(u)
 		for j := 0; j < len(keys); j++ {
@@ -54,7 +65,7 @@ func TestMin(t *testing.T) {
 	// Create trees with different universe sizes
 	for i := 1; i < maxUpower; i++ {
 		u := int(math.Pow(2, float64(i)))
-		V := CreateVEBTree(u)
+		V := CreateTree(u)
 		// Insert random, sorted keys and check if min corresponds to that key
 		keys := createRandomSortedKeys(u)
 		for j := len(keys) - 1; j >= 0; j-- {
@@ -73,7 +84,7 @@ func TestIsMember(t *testing.T) {
 	// Create trees with different universe sizes
 	for i := 1; i < maxUpower; i++ {
 		u := int(math.Pow(2, float64(i)))
-		V := CreateVEBTree(u)
+		V := CreateTree(u)
 		// check empty tree for membership first
 		for j := 0; j < u; j++ {
 			if out := V.IsMember(j); out != false {
@@ -98,22 +109,9 @@ func TestIsMember(t *testing.T) {
 			if out := V.IsMember(j); out != expect {
 				t.Errorf("IsMember(%v) = %v, want %v", j, out, expect)
 				break
-			}
+			}	
 		}
 
-		// delete inserted keys again
-		for j := 0; j < len(keys); j++ {
-			V.Delete(keys[j]) // Insert key into tree
-		}
-
-		// check membership again
-		for j := 0; j < u; j++ {
-			expect := false
-			if out := V.IsMember(j); out != expect {
-				t.Errorf("IsMember(%v) = %v, want %v", j, out, expect)
-				break
-			}
-		}
 	}
 }
 
@@ -122,7 +120,7 @@ func TestSuccessor(t *testing.T) {
 	// Create trees with different universe sizes
 	for i := 1; i < maxUpower; i++ {
 		u := int(math.Pow(2, float64(i)))
-		V := CreateVEBTree(u)
+		V := CreateTree(u)
 		
 		// check emptry tree for successors
 		for j := 0; j < u; j++ {
@@ -143,14 +141,14 @@ func TestSuccessor(t *testing.T) {
 			nextBiggerKey := -1
 			//find next bigger key
 			for k := 0; k < len(keys); k++ {
-				if keys[k] > i {
+				if keys[k] > j {
 					nextBiggerKey = keys[k]
 					break
 				}
 			}
 			expect := nextBiggerKey
-			if foundSuccessor := V.Successor(i); foundSuccessor != expect {
-				t.Errorf("Successor(%v) = %v, want %v", i, foundSuccessor, expect)
+			if foundSuccessor := V.Successor(j); foundSuccessor != expect {
+				t.Errorf("Successor(%v) = %v, want %v", j, foundSuccessor, expect)
 				break
 			}
 		}
@@ -162,7 +160,7 @@ func TestPredecessor(t *testing.T) {
 	// Create trees with different universe sizes
 	for i := 1; i < maxUpower; i++ {
 		u := int(math.Pow(2, float64(i)))
-		V := CreateVEBTree(u)
+		V := CreateTree(u)
 		
 		// check emptry tree for predecessors
 		for j := 0; j < u; j++ {
@@ -182,19 +180,155 @@ func TestPredecessor(t *testing.T) {
 			//find next smaller key
 			nextSmallerKey := -1
 			for k := len(keys)-1; k >= 0; k-- {
-				if keys[k] < i {
+				if keys[k] < j {
 					nextSmallerKey = keys[k]
 					break
 				}
 			}
 			expect := nextSmallerKey
-			if foundPred := V.Predecessor(i); foundPred != expect {
-				t.Errorf("Predecessor(%v) = %v, want %v", i, foundPred, expect)
+			if foundPred := V.Predecessor(j); foundPred != expect {
+				t.Errorf("Predecessor(%v) = %v, want %v \t %v", j, foundPred, expect, keys)
 				break
 			}
 		}
 	}
 }
+
+func TestDelete(t *testing.T) {
+	maxUpower := 10
+	// Create trees with different universe sizes
+	for i := 1; i < maxUpower; i++ {
+		u := int(math.Pow(2, float64(i)))
+		V := CreateTree(u)
+
+		/* fill tree */
+		V.Fill()
+
+		memberCount := 0
+		for m := 0; m < V.u; m++ {
+			if V.IsMember(m) {
+				memberCount++
+			}
+		}
+		//t.Errorf("------- %v -------", u)
+		//t.Errorf("count=%v after tree was filled", memberCount)
+
+		// delete random keys 
+		keys := createRandomSortedKeys(u)
+		//t.Errorf("delete keys %v", keys)
+		for j := 0; j < len(keys); j++ {
+			V.Delete(keys[j])
+		}
+
+		memberCount = 0
+		for m := 0; m < V.u; m++ {
+			if V.IsMember(m) {
+				memberCount++
+				//t.Errorf("member: %v", m)
+			}
+		}
+		//t.Errorf("count=%v after %v keys were deleted", memberCount, len(keys))
+
+
+
+		/* Check if all elements excepted deleted keys are members */
+		for k := 0; k < V.u; k++ {
+			expect := true
+			if arrayContains(keys, k) {
+				expect = false
+			}
+			if member := V.IsMember(k); member != expect {
+				t.Errorf("m=%v: \tIsMember(%v) = %v, want %v after keys %v were deleted before", i, k, member, expect, keys)
+			}
+		}
+
+		/* remove the rest */
+		for k := 0; k < V.u; k++ {
+			V.Delete(k)
+		}
+
+		for k := 0; k < V.u; k++ {
+			expect := false
+			if member := V.IsMember(k); member != expect {
+				t.Errorf("m=%v: \tIsMember(%v) = %v, want %v after all keys were deleted before", i, k, member, expect)
+			}
+		}
+
+
+		/* Check if all data structs min and max is -1 
+		expect := true
+		if out := V.IsTreeEmpty(); out != expect {
+			t.Errorf("IsTreeEmpty() = %v, want %v after all elements were deleted", out, expect)
+			break
+		}
+		*/
+	}
+}
+
+func TestClear(t *testing.T) {
+	maxUpower := 10
+	// Create trees with different universe sizes
+	for i := 1; i < maxUpower; i++ {
+		u := int(math.Pow(2, float64(i)))
+		V := CreateTree(u)
+		
+		// insert random keys 
+		keys := createRandomSortedKeys(u)
+		for j := 0; j < len(keys); j++ {
+			V.Insert(keys[j]) // Insert key into tree
+		}
+
+		// clear tree
+		V.Clear()
+
+		// check if a member exists
+		for j := 0; j < V.u; j++ {
+			if check := V.IsMember(j); check == true {
+				t.Errorf("IsMember(%v) = %v, want %v because tree was cleared before %v", j, check, false, keys)
+				break
+			}
+		}
+
+		/* Check if all data structs min and max is -1 */
+		if V.IsTreeEmpty() == false {
+			t.Errorf("IsTreeEmpty() = %v, want %v after all elements were deleted", true, false)
+			break
+		}
+	}
+}
+
+ // Insert sieht gut aus!
+func TestAsdf(t *testing.T) {
+	return
+	V := CreateTree(16)
+	keys := []int{0, 6, 7, 9, 11, 12, 13}
+	V.Fill()
+	for i := 0; i < len(keys); i++ {
+		V.Delete(keys[i])
+	}
+
+
+	
+
+	t.Errorf("%v", V)
+	t.Errorf("%v", V.summary)
+	t.Errorf("%v", V.summary.summary)
+	t.Errorf("%v", V.summary.cluster[0])
+	t.Errorf("%v", V.summary.cluster[1])
+	
+	for i := 0; i < len(V.cluster); i++ {
+		t.Errorf("%v", V.cluster[i])
+		t.Errorf("%v", V.cluster[i].summary)
+		for j := 0; j < len(V.cluster[i].cluster); j++ {
+			t.Errorf("%v", V.cluster[i].cluster[j])
+		}
+	}
+
+	for i := 0; i < V.u; i++ {
+		t.Errorf("%v: %v", i, V.IsMember(i))
+	}
+}
+
 
 func arrayContains(ar []int, value int) bool {
 	for i := 0; i < len(ar); i++ {
@@ -219,4 +353,21 @@ func createRandomSortedKeys(max int) []int {
 	sort.Ints(keys)
 
 	return keys
+}
+
+// Traverse tree down and check if every min/max is -1
+func (V *VEB) IsTreeEmpty() bool {
+	if V.u == 2 {
+		if V.min != -1 || V.max != -1 {
+			return false
+		}
+		return true
+	}
+
+	check := true
+	for i := 0; i < len(V.cluster); i++ {
+		check = check && V.cluster[i].IsTreeEmpty()
+	}
+	check = check && V.summary.IsTreeEmpty()
+	return check
 }

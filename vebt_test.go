@@ -6,6 +6,7 @@ import(
 	"math/rand"
 	"time"
 	"sort"
+	"fmt"
 )
 
 func TestLowerSqrt(t *testing.T) {
@@ -210,12 +211,9 @@ func TestDelete(t *testing.T) {
 				memberCount++
 			}
 		}
-		//t.Errorf("------- %v -------", u)
-		//t.Errorf("count=%v after tree was filled", memberCount)
 
 		// delete random keys 
 		keys := createRandomSortedKeys(u)
-		//t.Errorf("delete keys %v", keys)
 		for j := 0; j < len(keys); j++ {
 			V.Delete(keys[j])
 		}
@@ -224,12 +222,8 @@ func TestDelete(t *testing.T) {
 		for m := 0; m < V.u; m++ {
 			if V.IsMember(m) {
 				memberCount++
-				//t.Errorf("member: %v", m)
 			}
 		}
-		//t.Errorf("count=%v after %v keys were deleted", memberCount, len(keys))
-
-
 
 		/* Check if all elements excepted deleted keys are members */
 		for k := 0; k < V.u; k++ {
@@ -242,7 +236,7 @@ func TestDelete(t *testing.T) {
 			}
 		}
 
-		/* remove the rest */
+		/* remove everything */
 		for k := 0; k < V.u; k++ {
 			V.Delete(k)
 		}
@@ -253,15 +247,6 @@ func TestDelete(t *testing.T) {
 				t.Errorf("m=%v: \tIsMember(%v) = %v, want %v after all keys were deleted before", i, k, member, expect)
 			}
 		}
-
-
-		/* Check if all data structs min and max is -1 
-		expect := true
-		if out := V.IsTreeEmpty(); out != expect {
-			t.Errorf("IsTreeEmpty() = %v, want %v after all elements were deleted", out, expect)
-			break
-		}
-		*/
 	}
 }
 
@@ -297,38 +282,16 @@ func TestClear(t *testing.T) {
 	}
 }
 
- // Insert sieht gut aus!
-func TestAsdf(t *testing.T) {
-	return
+func TestPrint(t *testing.T) {
+	keys := createRandomSortedKeys(16)
+	fmt.Printf("Printing veb tree (u=16) with random keys %v inserted:\n", keys)
+
 	V := CreateTree(16)
-	keys := []int{0, 6, 7, 9, 11, 12, 13}
-	V.Fill()
 	for i := 0; i < len(keys); i++ {
-		V.Delete(keys[i])
+		V.Insert(keys[i])
 	}
-
-
-	
-
-	t.Errorf("%v", V)
-	t.Errorf("%v", V.summary)
-	t.Errorf("%v", V.summary.summary)
-	t.Errorf("%v", V.summary.cluster[0])
-	t.Errorf("%v", V.summary.cluster[1])
-	
-	for i := 0; i < len(V.cluster); i++ {
-		t.Errorf("%v", V.cluster[i])
-		t.Errorf("%v", V.cluster[i].summary)
-		for j := 0; j < len(V.cluster[i].cluster); j++ {
-			t.Errorf("%v", V.cluster[i].cluster[j])
-		}
-	}
-
-	for i := 0; i < V.u; i++ {
-		t.Errorf("%v: %v", i, V.IsMember(i))
-	}
+	V.Print()
 }
-
 
 func arrayContains(ar []int, value int) bool {
 	for i := 0; i < len(ar); i++ {
@@ -347,7 +310,7 @@ func createRandomSortedKeys(max int) []int {
 	for i := 0; i < keyNo; i++ {
 		rndKey := rnd.Intn(max - 1)
 		if arrayContains(keys, rndKey) == false {
-			keys = append(keys, rndKey)	
+			keys = append(keys, rndKey)
 		}
 	}
 	sort.Ints(keys)

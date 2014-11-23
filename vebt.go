@@ -254,6 +254,34 @@ func (V VEB) Count() int {
 	return sum
 }
 
+// Prints the tree to std out (for debugging purposes only)
+func (V VEB) Print() {
+	//function just acts as wrapper, since default parameters are not possible in go	
+	V.PrintFunc(0,0)
+}
+
+func (V VEB) PrintFunc(level, clusterNo int) {
+	spacer := ""
+	for i := 0; i < level; i++ {
+		spacer += "\t"
+	}
+
+	if level == 0 {
+		fmt.Printf("%vR: {u: %v, min: %v, max: %v, clusters: %v}\n", spacer, V.u, V.min, V.max, len(V.cluster))
+	} else {
+		fmt.Printf("%vC[%v]: {u: %v, min: %v, max: %v, clusters: %v}\n", spacer, clusterNo, V.u, V.min, V.max, len(V.cluster))
+	}
+	
+	if len(V.cluster) > 0 {
+		fmt.Printf("%v\tS:    {u: %v, min: %v, max: %v}\n", spacer, V.summary.u, V.summary.min, V.summary.max)
+		for i := 0; i < len(V.cluster); i++ {
+
+			V.cluster[i].PrintFunc(level+1, i)
+		}
+	}
+}
+
+
 // Counts all struct objects of the tree (for testing purposes)
 func (V *VEB) Clear() {
 	V.min, V.max = -1, -1

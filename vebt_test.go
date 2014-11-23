@@ -283,7 +283,8 @@ func TestClear(t *testing.T) {
 }
 
 func TestPrint(t *testing.T) {
-	keys := createRandomSortedKeys(16)
+	/*keys := createRandomSortedKeys(16)
+	
 	fmt.Printf("Printing veb tree (u=16) with random keys %v inserted:\n", keys)
 
 	V := CreateTree(16)
@@ -291,6 +292,45 @@ func TestPrint(t *testing.T) {
 		V.Insert(keys[i])
 	}
 	V.Print()
+	*/
+
+	// Create tree
+	u := 16
+	V := CreateTree(u)
+	fmt.Printf("Created tree with %v structs\n", V.Count())
+
+	// Insert some Elements
+	V.Insert(3)
+	V.Insert(6)
+	V.Insert(8)
+	V.Insert(13)
+
+	// Check which elements are members
+	members := []int{}
+	for i := 0; i < u; i++ {
+		if V.IsMember(i) {
+			members = append(members, i)
+		}
+	}
+	// Print members to console
+	fmt.Printf("Members: %v\n", members)
+
+	fmt.Printf("Min: %v\nMax: %v\n", V.Min(), V.Max())
+
+	for i := 0; i < len(members); i++ {
+		e := members[i]
+		fmt.Printf("Predecessor(%v): %v\t Successor(%v): %v\n", e, V.Predecessor(e), e, V.Successor(e))	
+	}
+
+	V.Print()
+
+	V.Delete(3)
+	V.Delete(13)
+	fmt.Printf("Min: %v\nMax: %v\n", V.Min(), V.Max())
+
+	V.Clear()
+	fmt.Printf("Min: %v\nMax: %v\n", V.Min(), V.Max())
+
 }
 
 func arrayContains(ar []int, value int) bool {
@@ -303,7 +343,7 @@ func arrayContains(ar []int, value int) bool {
 }
 
 func createRandomSortedKeys(max int) []int {
-	rnd := rand.New(rand.NewSource(int64(time.Now().Nanosecond())*1))
+	rnd := rand.New(rand.NewSource(int64(time.Now().Nanosecond())*1))	
 	keys := []int{}
 	keyNo := rnd.Intn(max)
 	//create random keys

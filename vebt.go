@@ -6,13 +6,13 @@ import (
 )
 
 type VEB struct {
-    u, min, max int //universe size, min-, max value
-    summary *VEB 	//pointer to summary
-    cluster []*VEB 	// array of pointers to each child cluster
+	u, min, max int    //universe size, min-, max value
+	summary     *VEB   //pointer to summary
+	cluster     []*VEB // array of pointers to each child cluster
 }
 
 func CreateTree(u int) *VEB {
-	if(u < 2) {
+	if u < 2 {
 		fmt.Println("Tree universe size u needs to be bigger than 2")
 		return nil
 	}
@@ -41,7 +41,7 @@ func CreateTree(u int) *VEB {
 	// create summary
 	summaryUnivSize := HigherSqrt(u)
 	V.summary = CreateTree(summaryUnivSize)
-	
+
 	return V
 }
 
@@ -49,26 +49,26 @@ func (V VEB) Max() int { return V.max }
 
 func (V VEB) Min() int { return V.min }
 
-func (V VEB) High(x int) int { 
-	return int(math.Floor(float64(x)/float64(LowerSqrt(V.u))))
+func (V VEB) High(x int) int {
+	return int(math.Floor(float64(x) / float64(LowerSqrt(V.u))))
 }
 
-func (V VEB) Low(x int) int { 
+func (V VEB) Low(x int) int {
 	return x % LowerSqrt(V.u)
 }
 
-func (V VEB) Index(x, y int) int { 
-	return x * LowerSqrt(V.u) + y
+func (V VEB) Index(x, y int) int {
+	return x*LowerSqrt(V.u) + y
 }
 
 func (V VEB) IsMember(x int) bool {
 	if x == V.min || x == V.max {
 		return true
 	} else if V.u == 2 {
-        return false
-    } else {
-        return V.cluster[V.High(x)].IsMember(V.Low(x))
-    } 
+		return false
+	} else {
+		return V.cluster[V.High(x)].IsMember(V.Low(x))
+	}
 }
 
 func (V *VEB) Insert(x int) {
@@ -103,7 +103,7 @@ func (V *VEB) Delete(x int) {
 		} else if x == V.min {
 			//2 elements in V: x is min element
 			V.min = V.max
-		} else { 
+		} else {
 			//2 elements in V: x is max element
 			V.max = V.min
 		}
@@ -173,7 +173,7 @@ func (V VEB) Successor(x int) int {
 			} else {
 				offset := V.cluster[succCluster].Min()
 				return V.Index(succCluster, offset)
-			}		
+			}
 		}
 	}
 }
@@ -197,7 +197,7 @@ func (V VEB) Predecessor(x int) int {
 			if predCluster == -1 {
 				if V.min != -1 && x > V.min {
 					return V.min
-				} else  {
+				} else {
 					return -1
 				}
 			} else {
@@ -224,8 +224,8 @@ func (V VEB) Count() int {
 
 // Prints the tree to std out (for debugging purposes only)
 func (V VEB) Print() {
-	//function just acts as wrapper, since default parameters are not possible in go	
-	V.PrintFunc(0,0)
+	//function just acts as wrapper, since default parameters are not possible in go
+	V.PrintFunc(0, 0)
 }
 
 func (V VEB) PrintFunc(level, clusterNo int) {
@@ -239,7 +239,7 @@ func (V VEB) PrintFunc(level, clusterNo int) {
 	} else {
 		fmt.Printf("%vC[%v]: {u: %v, min: %v, max: %v, clusters: %v}\n", spacer, clusterNo, V.u, V.min, V.max, len(V.cluster))
 	}
-	
+
 	if len(V.cluster) > 0 {
 		fmt.Printf("%v\tS:    {u: %v, min: %v, max: %v}\n", spacer, V.summary.u, V.summary.min, V.summary.max)
 		for i := 0; i < len(V.cluster); i++ {
@@ -249,11 +249,10 @@ func (V VEB) PrintFunc(level, clusterNo int) {
 	}
 }
 
-
 // Counts all struct objects of the tree (for testing purposes)
 func (V *VEB) Clear() {
 	V.min, V.max = -1, -1
-	
+
 	if V.u == 2 {
 		return
 	}
@@ -266,7 +265,6 @@ func (V *VEB) Clear() {
 	V.summary.Clear()
 }
 
-
 // Fills tree with all keys
 func (V *VEB) Fill() {
 	for i := 0; i < V.u; i++ {
@@ -276,10 +274,10 @@ func (V *VEB) Fill() {
 
 // Calculate lower square root (helper function)
 func LowerSqrt(u int) int {
-	return int(math.Pow(2.0, math.Floor(math.Log2(float64(u)) / 2)))
+	return int(math.Pow(2.0, math.Floor(math.Log2(float64(u))/2)))
 }
+
 // Calculate higher square root (helper function)
 func HigherSqrt(u int) int {
-	return int(math.Pow(2.0, math.Ceil(math.Log2(float64(u)) / 2)))
+	return int(math.Pow(2.0, math.Ceil(math.Log2(float64(u))/2)))
 }
-	

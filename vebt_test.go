@@ -1,12 +1,12 @@
 package vebt
 
-import(
-	"testing"
+import (
+	"fmt"
 	"math"
 	"math/rand"
-	"time"
 	"sort"
-	"fmt"
+	"testing"
+	"time"
 )
 
 func TestLowerSqrt(t *testing.T) {
@@ -36,9 +36,9 @@ func TestCreateTree(t *testing.T) {
 
 		// TODO: compare count with calculated number
 		/*
-		if count := V.Count(); count != 1 {
-			t.Errorf("CreateTree(%v) created %v VEB structures, want %v", u, count, count)
-		}
+			if count := V.Count(); count != 1 {
+				t.Errorf("CreateTree(%v) created %v VEB structures, want %v", u, count, count)
+			}
 		*/
 	}
 }
@@ -81,7 +81,7 @@ func TestMin(t *testing.T) {
 
 // Tests insert, membership + delete
 func TestIsMember(t *testing.T) {
-	 maxUpower := 10
+	maxUpower := 10
 	// Create trees with different universe sizes
 	for i := 1; i < maxUpower; i++ {
 		u := int(math.Pow(2, float64(i)))
@@ -110,7 +110,7 @@ func TestIsMember(t *testing.T) {
 			if out := V.IsMember(j); out != expect {
 				t.Errorf("IsMember(%v) = %v, want %v", j, out, expect)
 				break
-			}	
+			}
 		}
 
 	}
@@ -122,7 +122,7 @@ func TestSuccessor(t *testing.T) {
 	for i := 1; i < maxUpower; i++ {
 		u := int(math.Pow(2, float64(i)))
 		V := CreateTree(u)
-		
+
 		// check emptry tree for successors
 		for j := 0; j < u; j++ {
 			if out := V.Successor(j); out != -1 {
@@ -131,7 +131,7 @@ func TestSuccessor(t *testing.T) {
 			}
 		}
 
-		// insert random keys 
+		// insert random keys
 		keys := createRandomSortedKeys(u)
 		for j := 0; j < len(keys); j++ {
 			V.Insert(keys[j]) // Insert key into tree
@@ -162,7 +162,7 @@ func TestPredecessor(t *testing.T) {
 	for i := 1; i < maxUpower; i++ {
 		u := int(math.Pow(2, float64(i)))
 		V := CreateTree(u)
-		
+
 		// check emptry tree for predecessors
 		for j := 0; j < u; j++ {
 			if out := V.Predecessor(j); out != -1 {
@@ -171,7 +171,7 @@ func TestPredecessor(t *testing.T) {
 			}
 		}
 
-		// insert random keys 
+		// insert random keys
 		keys := createRandomSortedKeys(u)
 		for j := 0; j < len(keys); j++ {
 			V.Insert(keys[j]) // Insert key into tree
@@ -180,7 +180,7 @@ func TestPredecessor(t *testing.T) {
 		for j := 0; j < u; j++ {
 			//find next smaller key
 			nextSmallerKey := -1
-			for k := len(keys)-1; k >= 0; k-- {
+			for k := len(keys) - 1; k >= 0; k-- {
 				if keys[k] < j {
 					nextSmallerKey = keys[k]
 					break
@@ -212,7 +212,7 @@ func TestDelete(t *testing.T) {
 			}
 		}
 
-		// delete random keys 
+		// delete random keys
 		keys := createRandomSortedKeys(u)
 		for j := 0; j < len(keys); j++ {
 			V.Delete(keys[j])
@@ -256,8 +256,8 @@ func TestClear(t *testing.T) {
 	for i := 1; i < maxUpower; i++ {
 		u := int(math.Pow(2, float64(i)))
 		V := CreateTree(u)
-		
-		// insert random keys 
+
+		// insert random keys
 		keys := createRandomSortedKeys(u)
 		for j := 0; j < len(keys); j++ {
 			V.Insert(keys[j]) // Insert key into tree
@@ -284,7 +284,7 @@ func TestClear(t *testing.T) {
 
 func TestPrint(t *testing.T) {
 	keys := createRandomSortedKeys(16)
-	
+
 	fmt.Printf("Printing veb tree (u=16) with random keys %v inserted:\n", keys)
 
 	V := CreateTree(16)
@@ -304,7 +304,7 @@ func arrayContains(ar []int, value int) bool {
 }
 
 func createRandomSortedKeys(max int) []int {
-	rnd := rand.New(rand.NewSource(int64(time.Now().Nanosecond())*1))	
+	rnd := rand.New(rand.NewSource(int64(time.Now().Nanosecond()) * 1))
 	keys := []int{}
 	keyNo := rnd.Intn(max)
 	//create random keys

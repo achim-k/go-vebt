@@ -94,7 +94,9 @@ Predecessor(8): 6	 Successor(8): 13
 Predecessor(13): 8	 Successor(13): -1
 ```
 
-#### Print tree to std out (useful for debug)
+#### Print
+Prints tree to std out (useful for debug)
+
 Code:
 ``` 
 V.Print()
@@ -130,7 +132,7 @@ V.Delete(3)
 V.Delete(13)
 fmt.Printf("Min: %v\nMax: %v\n", V.Min(), V.Max())
 
-V.Clear()
+V.Clear() // Deletes all keys in tree
 fmt.Printf("Min: %v\nMax: %v\n", V.Min(), V.Max())
 ```
 

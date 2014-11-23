@@ -94,37 +94,6 @@ func (V *VEB) Insert(x int) {
 	}
 }
 
-func (V *VEB) DeleteOld(x int) {
-	if V.min == V.max && V.min == x {
-		V.min, V.max = -1, -1
-	} else if V.u == 2 {
-		if x == 0 {
-			V.min = 1
-		} else {
-			V.min = 0
-		}
-		V.max = V.min
-	} else if x == V.min {
-		firstCluster := V.summary.Min()
-		x = V.Index(firstCluster, V.cluster[firstCluster].Min())
-		V.min = x
-		V.cluster[V.High(x)].Delete(V.Low(x))
-		if V.cluster[V.High(x)].Min() == -1 {
-			V.summary.Delete(V.High(x))
-			if x == V.max {
-				summaryMax := V.summary.Max()
-				if summaryMax == -1 {
-					V.max = V.min
-				} else {
-					V.max = V.Index(summaryMax, V.cluster[summaryMax].Max())
-				}
-			}
-		} 
-	} else if x == V.max {
-		V.max = V.Index(V.High(x), V.cluster[V.High(x)].Max())
-	}
-}
-
 func (V *VEB) Delete(x int) {
 	if V.summary == nil || V.summary.Min() == -1 {
 		// No nonempty cluster
@@ -143,7 +112,6 @@ func (V *VEB) Delete(x int) {
 		// some nonempty cluster
 		if x == V.min {
 			// get smallest element in cluster
-			//y := V.cluster[V.summary.min].min;
 			y := V.Index(V.summary.min, V.cluster[V.summary.min].min)
 			V.min = y
 			// delete element from cluster

@@ -14,15 +14,15 @@ The implemented Van Emde Boas tree data structure supports the following operati
 * Mininum
 * Maximum
 
-# Usage
+## Usage
 
-## Install
+### Install
 Usage:
 ```
 go get github.com/achimk1704/go-vebt
 ```
 
-## Import
+### Import
 Add library to import statement:
 ```
 import (	
@@ -31,9 +31,9 @@ import (
 )
 ```
 
-## Example usage
+### Example usage
 
-### Tree creation & Insert & Member check
+#### Tree creation & Insert & Member check
 Code:
 ```
 // Create tree
@@ -64,7 +64,7 @@ Created tree with 21 structs
 Members: [3 6 8 13]
 ```
 
-### Min + Max
+#### Min + Max
 Code:
 ``` 
 fmt.Printf("Min: %v\nMax: %v\n", V.Min(), V.Max())
@@ -76,12 +76,13 @@ Min: 3
 Max: 13
 ```
 
-### Predecessor & Successor
+#### Predecessor & Successor
 Code:
 ``` 
 for i := 0; i < len(members); i++ {
 	e := members[i]
-	fmt.Printf("Predecessor(%v): %v\t Successor(%v): %v\n", e, V.Predecessor(e), e, V.Successor(e))	
+	fmt.Printf("Predecessor(%v): %v\t Successor(%v): %v\n", 
+				e, V.Predecessor(e), e, V.Successor(e))	
 }
 ```
 
@@ -93,7 +94,7 @@ Predecessor(8): 6	 Successor(8): 13
 Predecessor(13): 8	 Successor(13): -1
 ```
 
-### Print tree to std out (useful for debug)
+#### Print tree to std out (useful for debug)
 Code:
 ``` 
 V.Print()
@@ -122,7 +123,7 @@ R: {u: 16, min: 3, max: 13, clusters: 4}
 ```
 R: Root element, S: Summary, C[x]: cluster x of a node
 
-### Delete & Clear
+#### Delete & Clear
 Code:
 ``` 
 V.Delete(3)

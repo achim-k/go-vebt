@@ -4,7 +4,7 @@ go-vebt
 Go implementation of Van Emde Boas tree data structure. The implementation was part of a project for "advanced data structures" class at Seoul National University.
 
 ## Features
-The implemented Van Emde Boas tree data structure supports the following operations:
+The implemented Van Emde Boas tree data structure supports the following core operations:
 
 * Insert
 * Delete
@@ -13,6 +13,12 @@ The implemented Van Emde Boas tree data structure supports the following operati
 * Predecessor
 * Mininum
 * Maximum
+
+The following operations are also supported, which might be useful (e.g. for debugging):
+* Print
+* Count
+* Clear
+* Fill
 
 ## Usage
 
@@ -41,7 +47,7 @@ u := 16
 V := CreateTree(u)
 fmt.Printf("Created tree with %v structs\n", V.Count())
 
-// Insert some Elements
+// Insert some elements
 V.Insert(3)
 V.Insert(6)
 V.Insert(8)

@@ -118,17 +118,17 @@ R: {u: 16, min: 3, max: 13, clusters: 4}
 		S:    {u: 2, min: -1, max: -1, clusters: 0}
 		C[0]: {u: 2, min: -1, max: -1, clusters: 0}
 		C[1]: {u: 2, min: -1, max: -1, clusters: 0}
-	C[1]: {u: 4, min: 0, max: 3, clusters: 2}
-		S:    {u: 2, min: 0, max: 1, clusters: 0}
-		C[0]: {u: 2, min: 1, max: 1, clusters: 0}
-		C[1]: {u: 2, min: 1, max: 1, clusters: 0}
-	C[2]: {u: 4, min: 0, max: 3, clusters: 2}
-		S:    {u: 2, min: 0, max: 1, clusters: 0}
-		C[0]: {u: 2, min: 1, max: 1, clusters: 0}
-		C[1]: {u: 2, min: 1, max: 1, clusters: 0}
-	C[3]: {u: 4, min: 0, max: 1, clusters: 2}
-		S:    {u: 2, min: 0, max: 0, clusters: 0}
-		C[0]: {u: 2, min: 1, max: 1, clusters: 0}
+	C[1]: {u: 4, min: 2, max: 2, clusters: 2}
+		S:    {u: 2, min: -1, max: -1, clusters: 0}
+		C[0]: {u: 2, min: -1, max: -1, clusters: 0}
+		C[1]: {u: 2, min: -1, max: -1, clusters: 0}
+	C[2]: {u: 4, min: 0, max: 0, clusters: 2}
+		S:    {u: 2, min: -1, max: -1, clusters: 0}
+		C[0]: {u: 2, min: -1, max: -1, clusters: 0}
+		C[1]: {u: 2, min: -1, max: -1, clusters: 0}
+	C[3]: {u: 4, min: 1, max: 1, clusters: 2}
+		S:    {u: 2, min: -1, max: -1, clusters: 0}
+		C[0]: {u: 2, min: -1, max: -1, clusters: 0}
 		C[1]: {u: 2, min: -1, max: -1, clusters: 0}
 ```
 R: Root element, S: Summary, C[x]: cluster x of a node

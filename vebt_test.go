@@ -1,7 +1,6 @@
 package vebt
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"sort"
@@ -282,17 +281,19 @@ func TestClear(t *testing.T) {
 	}
 }
 
+/*
 func TestPrint(t *testing.T) {
 	keys := createRandomSortedKeys(16)
 
 	fmt.Printf("Printing veb tree (u=16) with random keys %v inserted:\n", keys)
 
-	V := CreateTree(16)
+	V := CreateTree(128)
 	for i := 0; i < len(keys); i++ {
 		V.Insert(keys[i])
 	}
 	V.Print()
 }
+*/
 
 func arrayContains(ar []int, value int) bool {
 	for i := 0; i < len(ar); i++ {

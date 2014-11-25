@@ -241,9 +241,11 @@ func (V VEB) PrintFunc(level, clusterNo int) {
 	}
 
 	if len(V.cluster) > 0 {
-		fmt.Printf("%v\tS:    {u: %v, min: %v, max: %v}\n", spacer, V.summary.u, V.summary.min, V.summary.max)
+		fmt.Printf("%v\tS:    {u: %v, min: %v, max: %v, clusters: %v}\n", spacer, V.summary.u, V.summary.min, V.summary.max, len(V.summary.cluster))
+		for i := 0; i < len(V.summary.cluster); i++ {
+			V.summary.cluster[i].PrintFunc(level+2, i)
+		}
 		for i := 0; i < len(V.cluster); i++ {
-
 			V.cluster[i].PrintFunc(level+1, i)
 		}
 	}

@@ -19,6 +19,7 @@ The following operations are also supported, which might be useful (e.g. for deb
 * Count
 * Clear
 * Fill
+* Members
 
 ## Usage
 
@@ -39,7 +40,7 @@ import (
 
 ### Example usage
 
-#### Tree creation & Insert & Member check
+#### CreateTree() & Insert() & IsMember()
 Code:
 ```
 // Create tree
@@ -70,7 +71,7 @@ Created tree with 21 structs
 Members: [3 6 8 13]
 ```
 
-#### Min + Max
+#### Min() & Max()
 Code:
 ``` 
 fmt.Printf("Min: %v\nMax: %v\n", V.Min(), V.Max())
@@ -82,7 +83,7 @@ Min: 3
 Max: 13
 ```
 
-#### Predecessor & Successor
+#### Predecessor() & Successor()
 Code:
 ``` 
 for i := 0; i < len(members); i++ {
@@ -100,7 +101,7 @@ Predecessor(8): 6	 Successor(8): 13
 Predecessor(13): 8	 Successor(13): -1
 ```
 
-#### Print
+#### Print()
 Prints tree to std out (useful for debug)
 
 Code:
@@ -133,23 +134,21 @@ R: {u: 16, min: 3, max: 13, clusters: 4}
 ```
 R: Root element, S: Summary, C[x]: cluster x of a node
 
-#### Delete & Clear
+#### Delete() & Clear() & Member()
 Code:
 ``` 
 V.Delete(3)
 V.Delete(13)
-fmt.Printf("Min: %v\nMax: %v\n", V.Min(), V.Max())
+fmt.Printf("Members: %v \n", V.Members())
 
 V.Clear() // Deletes all keys in tree
-fmt.Printf("Min: %v\nMax: %v\n", V.Min(), V.Max())
+fmt.Printf("Members: %v \n", V.Members())
 ```
 
 Output:
 ``` 
-Min: 6
-Max: 8
-Min: -1
-Max: -1
+Members: [6 8] 
+Members: [] 
 ```
 
 

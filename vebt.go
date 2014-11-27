@@ -274,6 +274,17 @@ func (V *VEB) Fill() {
 	}
 }
 
+// Get array with members of tree
+func (V VEB) Members() []int{
+	members := []int{}
+	for i := 0; i < V.u; i++ {
+		if V.IsMember(i) {
+			members = append(members, i)
+		}
+	}
+	return members
+}
+
 // Calculate lower square root (helper function)
 func LowerSqrt(u int) int {
 	return int(math.Pow(2.0, math.Floor(math.Log2(float64(u))/2)))

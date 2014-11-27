@@ -11,17 +11,17 @@ type VEB struct {
 	cluster     []*VEB // array of pointers to each child cluster
 }
 
-func CreateTree(u int) *VEB {
-	if u < 2 {
-		fmt.Println("Tree universe size u needs to be bigger than 2")
+// Creates an tree with a universe size (u) with u=2^x, where x is chosen,
+// so that 2^(x-1) < size <= 2^x. Returns the pointer on the root element
+// or nil on failure
+func CreateTree(size int) *VEB {
+	if size < 0 {
 		return nil
 	}
 
-	pow := math.Log2(float64(u))
-	if math.Trunc(pow) != pow {
-		fmt.Println("Tree universe size u not power of 2 (u != 2^x)")
-		return nil
-	}
+	// choose x so that 2^(x-1) < u <= 2^x
+	x := math.Ceil(math.Log2(float64(size)))
+	u := int(math.Pow(2, x))
 
 	V := new(VEB)
 	V.min, V.max = -1, -1
@@ -45,22 +45,28 @@ func CreateTree(u int) *VEB {
 	return V
 }
 
+// Returns the maximum of the tree
 func (V VEB) Max() int { return V.max }
 
+// Returns the minimum of the tree
 func (V VEB) Min() int { return V.min }
 
+// Calculates and returns the cluster number where x is stored in the tree  
 func (V VEB) High(x int) int {
 	return int(math.Floor(float64(x) / float64(LowerSqrt(V.u))))
 }
 
+// Calculates and returns the position in which x appears in its cluster
 func (V VEB) Low(x int) int {
 	return x % LowerSqrt(V.u)
 }
 
+// Calculates and returns the index for x and y
 func (V VEB) Index(x, y int) int {
 	return x*LowerSqrt(V.u) + y
 }
 
+// Checks if x is stored in the tree. Returns true if so, false if not
 func (V VEB) IsMember(x int) bool {
 	if x == V.min || x == V.max {
 		return true
@@ -71,6 +77,7 @@ func (V VEB) IsMember(x int) bool {
 	}
 }
 
+// Inserts x into the tree
 func (V *VEB) Insert(x int) {
 	if V.min == -1 {
 		V.min, V.max = x, x
@@ -94,6 +101,7 @@ func (V *VEB) Insert(x int) {
 	}
 }
 
+// Removes x from the tree
 func (V *VEB) Delete(x int) {
 	if V.summary == nil || V.summary.Min() == -1 {
 		// No nonempty cluster
@@ -152,6 +160,7 @@ func (V *VEB) Delete(x int) {
 	}
 }
 
+// Finds the successor element of x in the tree
 func (V VEB) Successor(x int) int {
 	if V.u == 2 {
 		if x == 0 && V.max == 1 {
@@ -178,6 +187,7 @@ func (V VEB) Successor(x int) int {
 	}
 }
 
+// Finds the predecessor element of x in the tree
 func (V VEB) Predecessor(x int) int {
 	if V.u == 2 {
 		if x == 1 && V.min == 0 {
@@ -208,7 +218,7 @@ func (V VEB) Predecessor(x int) int {
 	}
 }
 
-// Counts all struct objects of the tree (for testing purposes)
+// Counts and returns all objects (structs) of the tree
 func (V VEB) Count() int {
 	if V.u == 2 {
 		return 1
@@ -222,12 +232,14 @@ func (V VEB) Count() int {
 	return sum
 }
 
-// Prints the tree to std out (for debugging purposes only)
+// Prints the tree to std out
 func (V VEB) Print() {
 	//function just acts as wrapper, since default parameters are not possible in go
 	V.PrintFunc(0, 0)
 }
 
+// Prints the tree to std out, where level is used to keep track of idention and clusterNo to 
+// track the number of the cluster
 func (V VEB) PrintFunc(level, clusterNo int) {
 	spacer := ""
 	for i := 0; i < level; i++ {
@@ -251,7 +263,7 @@ func (V VEB) PrintFunc(level, clusterNo int) {
 	}
 }
 
-// Counts all struct objects of the tree (for testing purposes)
+// Clears the tree by setting min and max to -1 for every node of the tree
 func (V *VEB) Clear() {
 	V.min, V.max = -1, -1
 
@@ -267,14 +279,14 @@ func (V *VEB) Clear() {
 	V.summary.Clear()
 }
 
-// Fills tree with all keys
+// Fills tree with all keys (inserts all keys from 0 to u)
 func (V *VEB) Fill() {
 	for i := 0; i < V.u; i++ {
 		V.Insert(i)
 	}
 }
 
-// Get array with members of tree
+// Get array of tree members
 func (V VEB) Members() []int{
 	members := []int{}
 	for i := 0; i < V.u; i++ {

@@ -283,15 +283,9 @@ func TestClear(t *testing.T) {
 
 /*
 func TestPrint(t *testing.T) {
-	keys := createRandomSortedKeys(16)
-
-	fmt.Printf("Printing veb tree (u=16) with random keys %v inserted:\n", keys)
-
-	V := CreateTree(128)
-	for i := 0; i < len(keys); i++ {
-		V.Insert(keys[i])
-	}
-	V.Print()
+ 	V := CreateTree(13)
+fmt.Println("Treeuniversesize:",V.u)
+ 	
 }
 */
 

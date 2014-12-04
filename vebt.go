@@ -235,12 +235,12 @@ func (V VEB) Count() int {
 // Prints the tree to std out
 func (V VEB) Print() {
 	//function just acts as wrapper, since default parameters are not possible in go
-	V.PrintFunc(0, 0)
+	V.PrintFunc(0, 0, false)
 }
 
 // Prints the tree to std out, where level is used to keep track of idention and clusterNo to 
 // track the number of the cluster
-func (V VEB) PrintFunc(level, clusterNo int) {
+func (V VEB) PrintFunc(level, clusterNo int, summary bool) {
 	spacer := ""
 	for i := 0; i < level; i++ {
 		spacer += "\t"
@@ -249,16 +249,20 @@ func (V VEB) PrintFunc(level, clusterNo int) {
 	if level == 0 {
 		fmt.Printf("%vR: {u: %v, min: %v, max: %v, clusters: %v}\n", spacer, V.u, V.min, V.max, len(V.cluster))
 	} else {
-		fmt.Printf("%vC[%v]: {u: %v, min: %v, max: %v, clusters: %v}\n", spacer, clusterNo, V.u, V.min, V.max, len(V.cluster))
+		if summary {
+			fmt.Printf("%vS:    {u: %v, min: %v, max: %v, clusters: %v}\n", spacer, V.u, V.min, V.max, len(V.cluster))
+		} else {
+			fmt.Printf("%vC[%v]: {u: %v, min: %v, max: %v, clusters: %v}\n", spacer, clusterNo, V.u, V.min, V.max, len(V.cluster))
+		}
 	}
 
 	if len(V.cluster) > 0 {
-		fmt.Printf("%v\tS:    {u: %v, min: %v, max: %v, clusters: %v}\n", spacer, V.summary.u, V.summary.min, V.summary.max, len(V.summary.cluster))
-		for i := 0; i < len(V.summary.cluster); i++ {
-			V.summary.cluster[i].PrintFunc(level+2, i)
-		}
+		// print summary
+		V.summary.PrintFunc(level+1, 0, true)
+
+		// print clusters
 		for i := 0; i < len(V.cluster); i++ {
-			V.cluster[i].PrintFunc(level+1, i)
+			V.cluster[i].PrintFunc(level+1, i, false)
 		}
 	}
 }
@@ -279,7 +283,7 @@ func (V *VEB) Clear() {
 	V.summary.Clear()
 }
 
-// Fills tree with all keys (inserts all keys from 0 to u)
+// Fills tree with all keys (inserts all keys from 0 to u-1)
 func (V *VEB) Fill() {
 	for i := 0; i < V.u; i++ {
 		V.Insert(i)

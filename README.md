@@ -1,7 +1,7 @@
 go-vebt
 =======
 
-Go implementation of Van Emde Boas tree data structure. The implementation was part of a project for "advanced data structures" class at Seoul National University.
+Go implementation of Van Emde Boas tree data structure. The implementation was part of a project for "advanced data structures" class at Seoul National University. License: MIT
 
 ## Features
 The implemented Van Emde Boas tree data structure supports the following core operations:
@@ -26,14 +26,14 @@ The following operations are also supported, which might be useful (e.g. for deb
 ### Install
 Usage:
 ```
-go get github.com/achimk1704/go-vebt
+go get github.com/achim-k/go-vebt
 ```
 
 ### Import
 Add library to import statement:
 ```
 import (	
-	"github.com/achimk1704/go-vebt"
+	"github.com/achim-k/go-vebt"
 	...
 )
 ```
